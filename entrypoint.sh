@@ -8,9 +8,9 @@ then
 fi
 
 # Init system variable
-SHORT=r:,w:,
+SHORT=r:,w:,d:,
 LONG=db_host:,db_port:,db_user:,db_password:,
-OPTS=$(getopt -a -n weather --options $SHORT --longoptions $LONG "$@")
+OPTS=$(getopt -a --options $SHORT --longoptions $LONG "$@")
 
 eval set -- "$OPTS"
 
@@ -34,7 +34,7 @@ do
       shift 2
       ;;
     - | --)
-      shift;
+      shift 2;
       break
       ;;
     *)
@@ -47,5 +47,5 @@ done
 source /etc/profile
 
 # setup supervisord
-sed -i '/command =/ s/= .*/= odoo.sh '"$args"'/g' /etc/supervisor/conf.d/odoo.conf
+sed -i "s#command = odoo.sh#command = odoo.sh $args#g" /etc/supervisor/conf.d/odoo.conf
 supervisord --nodaemon --configuration /etc/supervisord.conf
