@@ -18,22 +18,22 @@ while :
 do
   case "$1" in
     --db_host )
-      db_host="$2"
+      sed -i "s/: \${DB_HOST:='localhost'}/: \${DB_HOST:='$2'}/g" /etc/profile.d/odoo.sh
       shift 2
       ;;
     --db_port )
-      db_port="$2"
+      sed -i "s/: \${DB_PORT:=5432}/: \${DB_PORT:=$2}/g" /etc/profile.d/odoo.sh
       shift 2
       ;;
     -r | --db_user )
-      db_user="$2"
+      sed -i "s/: \${DB_USER:='odoo'}/: \${DB_USER:='$2'}/g" /etc/profile.d/odoo.sh
       shift 2
       ;;
     -w | --db_password )
-      db_password="$2"
+      sed -i "s/: \${DB_PASSWORD:='odoo'}/: \${DB_PASSWORD:='$2'}/g" /etc/profile.d/odoo.sh
       shift 2
       ;;
-    --)
+    - | --)
       shift;
       break
       ;;
