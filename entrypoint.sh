@@ -33,8 +33,8 @@ do
       sed -i "s/: \${DB_PASSWORD:='odoo'}/: \${DB_PASSWORD:='$2'}/g" /etc/profile.d/odoo.sh
       shift 2
       ;;
-    - | --)
-      shift 2;
+    - | -- )
+      shift;
       break
       ;;
     *)
@@ -47,5 +47,5 @@ done
 source /etc/profile
 
 # setup supervisord
-sed -i "s#command = odoo.sh#command = odoo.sh $args#g" /etc/supervisor/conf.d/odoo.conf
+sed -i "s#command = odoo.sh.*#command = odoo.sh $args#g" /etc/supervisor/conf.d/odoo.conf
 supervisord --nodaemon --configuration /etc/supervisord.conf
