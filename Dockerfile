@@ -3,6 +3,8 @@ LABEL maintainer="Fanani M. Ihsan"
 
 ENV LANG C.UTF-8
 
+ENV ODOO_VERSION 14.0
+
 # Install some dependencies
 RUN apk add --no-cache \
     bash \
@@ -54,8 +56,8 @@ COPY --from=madnight/alpine-wkhtmltopdf-builder:0.12.5-alpine3.10 \
     /bin/wkhtmltoimage /bin/wkhtmltoimage
 
 # Add Core Odoo
-ADD https://github.com/odoo/odoo/archive/refs/heads/14.0.zip .
-RUN unzip 14.0.zip && cd odoo-14.0 && python setup.py install && \
+ADD https://github.com/odoo/odoo/archive/refs/heads/${ODOO_VERSION}.zip .
+RUN unzip ${ODOO_VERSION}.zip && cd odoo-${ODOO_VERSION} && python setup.py install && \
     sed -i "s/gevent==20.9.0 ; python_version >= '3.8'/gevent==20.9.0 ; python_version > '3.7' and python_version <= '3.9'\ngevent==21.8.0 ; python_version > '3.9'  # (Jammy)/g" requirements.txt && \
     sed -i "s/greenlet==0.4.17 ; python_version > '3.7'/greenlet==0.4.17 ; python_version > '3.7' and python_version <= '3.9'\ngreenlet==1.1.2 ; python_version  > '3.9'  # (Jammy)/g" requirements.txt && \
     sed -i "s/pyopenssl==19.0.0/pyopenssl==19.0.0 ; python_version > '3.7' and python_version <= '3.8'\npyopenssl==22.1.0 ; python_version > '3.8'  # (Fanani)/g" requirements.txt && \
@@ -64,11 +66,11 @@ RUN unzip 14.0.zip && cd odoo-14.0 && python setup.py install && \
     pip3 install setuptools && \
     pip3 install -r requirements.txt --no-cache-dir
 # Clear Installation cache
-RUN mv /odoo-14.0/addons /mnt/community_addons && rm -rf 14.0.zip odoo-14.0
+RUN mv /odoo-${ODOO_VERSION}/addons /mnt/community_addons && rm -rf ${ODOO_VERSION}.zip odoo-${ODOO_VERSION}
 
 # Fix alpine python path
-ADD https://raw.githubusercontent.com/odoo/docker/master/14.0/entrypoint.sh /usr/local/bin/odoo.sh
-ADD https://raw.githubusercontent.com/odoo/docker/master/14.0/wait-for-psql.py /usr/local/bin/wait-for-psql.py
+ADD https://raw.githubusercontent.com/odoo/docker/master/${ODOO_VERSION}/entrypoint.sh /usr/local/bin/odoo.sh
+ADD https://raw.githubusercontent.com/odoo/docker/master/${ODOO_VERSION}/wait-for-psql.py /usr/local/bin/wait-for-psql.py
 
 # Copy config files
 COPY ./etc/nginx/http.d/default.conf /etc/nginx/http.d/default.conf
