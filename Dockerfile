@@ -1,9 +1,9 @@
-FROM python:3.7-alpine
+FROM python:3.11-alpine
 LABEL maintainer="Fanani M. Ihsan"
 
 ENV LANG C.UTF-8
 
-ENV ODOO_VERSION 14.0
+ENV ODOO_VERSION 16.0
 
 # Install some dependencies
 RUN apk add --no-cache \
@@ -58,9 +58,6 @@ COPY --from=madnight/alpine-wkhtmltopdf-builder:0.12.5-alpine3.10 \
 # Add Core Odoo
 ADD https://github.com/odoo/odoo/archive/refs/heads/${ODOO_VERSION}.zip .
 RUN unzip ${ODOO_VERSION}.zip && cd odoo-${ODOO_VERSION} && python setup.py install && \
-    sed -i "s/gevent==20.9.0 ; python_version >= '3.8'/gevent==20.9.0 ; python_version > '3.7' and python_version <= '3.9'\ngevent==21.8.0 ; python_version > '3.9'  # (Jammy)/g" requirements.txt && \
-    sed -i "s/greenlet==0.4.17 ; python_version > '3.7'/greenlet==0.4.17 ; python_version > '3.7' and python_version <= '3.9'\ngreenlet==1.1.2 ; python_version  > '3.9'  # (Jammy)/g" requirements.txt && \
-    sed -i "s/pyopenssl==19.0.0/pyopenssl==19.0.0 ; python_version > '3.7' and python_version <= '3.8'\npyopenssl==22.1.0 ; python_version > '3.8'  # (Fanani)/g" requirements.txt && \
     echo 'INPUT ( libldap.so )' > /usr/lib/libldap_r.so && \
     pip3 install --upgrade pip && \
     pip3 install setuptools && \
