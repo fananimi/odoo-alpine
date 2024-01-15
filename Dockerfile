@@ -1,9 +1,9 @@
-FROM python:3.11-alpine
+FROM python:3.10-alpine
 LABEL maintainer="Fanani M. Ihsan"
 
 ENV LANG C.UTF-8
 
-ENV ODOO_VERSION 16.0
+ENV ODOO_VERSION 17.0
 
 # Install some dependencies
 RUN apk add --no-cache \
@@ -25,7 +25,6 @@ RUN apk add --no-cache \
     libjpeg-turbo-dev \
     libpng \
     libpng-dev \
-    libssl1.1 \
     libstdc++ \
     libx11 \
     libxcb \
@@ -57,10 +56,10 @@ COPY --from=madnight/alpine-wkhtmltopdf-builder:0.12.5-alpine3.10 \
 
 # Add Core Odoo
 ADD https://github.com/odoo/odoo/archive/refs/heads/${ODOO_VERSION}.zip .
-RUN unzip ${ODOO_VERSION}.zip && cd odoo-${ODOO_VERSION} && python setup.py install && \
+RUN unzip ${ODOO_VERSION}.zip && cd odoo-${ODOO_VERSION} && \
+    pip install setuptools --upgrade && \
+    python setup.py install && \
     echo 'INPUT ( libldap.so )' > /usr/lib/libldap_r.so && \
-    pip3 install --upgrade pip && \
-    pip3 install setuptools && \
     pip3 install -r requirements.txt --no-cache-dir
 # Clear Installation cache
 RUN mv /odoo-${ODOO_VERSION}/addons /mnt/community_addons && rm -rf ${ODOO_VERSION}.zip odoo-${ODOO_VERSION}
