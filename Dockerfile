@@ -1,9 +1,13 @@
 FROM python:3.10-alpine
-LABEL maintainer="Fanani M. Ihsan"
+LABEL maintainer="Enterprise Team engineer@efishery.com"
+
+RUN echo "Build eFishery ERP"
 
 ENV LANG C.UTF-8
-
 ENV ODOO_VERSION 17.0
+ENV ODOO_RC /etc/odoo/odoo.conf
+
+WORKDIR /build
 
 # Install some dependencies
 RUN apk add --no-cache \
@@ -58,11 +62,14 @@ COPY --from=madnight/alpine-wkhtmltopdf-builder:0.12.5-alpine3.10 \
 ADD https://github.com/odoo/odoo/archive/refs/heads/${ODOO_VERSION}.zip .
 RUN unzip ${ODOO_VERSION}.zip && cd odoo-${ODOO_VERSION} && \
     pip install setuptools --upgrade && \
-    python setup.py install && \
     echo 'INPUT ( libldap.so )' > /usr/lib/libldap_r.so && \
-    pip3 install -r requirements.txt --no-cache-dir
+    pip3 install -r requirements.txt --no-cache-dir  && \
+    python setup.py install
+
 # Clear Installation cache
-RUN mv /odoo-${ODOO_VERSION}/addons /mnt/community_addons && rm -rf ${ODOO_VERSION}.zip odoo-${ODOO_VERSION}
+RUN mv /build/odoo-${ODOO_VERSION}/addons /mnt/community_addons && rm -rf /build
+
+WORKDIR /
 
 # Fix alpine python path
 ADD https://raw.githubusercontent.com/odoo/docker/master/${ODOO_VERSION}/entrypoint.sh /usr/local/bin/odoo.sh
@@ -78,16 +85,16 @@ COPY ./etc/supervisord.conf /etc/supervisord.conf
 COPY ./etc/syslog-ng/conf.d/odoo.conf /etc/syslog-ng/conf.d/odoo.conf
 COPY ./etc/supervisor/conf.d/nginx.conf /etc/supervisor/conf.d/nginx.conf
 COPY ./etc/supervisor/conf.d/odoo.conf /etc/supervisor/conf.d/odoo.conf
-COPY ./entrypoint.sh .
 
 # Set permissions
 RUN chown nginx:nginx -R /etc/odoo && chmod 755 /etc/odoo && \
     chown nginx:nginx -R /mnt && chmod 755 /mnt && \
     chmod 777 /usr/local/bin/odoo.sh && chmod 777 /usr/local/bin/wait-for-psql.py
 
-# Set the default config file
-ENV ODOO_RC /etc/odoo/odoo.conf
+COPY ./etc/nginx/http.d/default.conf /etc/nginx/http.d/default.conf
+COPY ./entrypoint.sh /entrypoint.sh
 
-# Expose web service
+# # Expose web service
 EXPOSE 8080
+
 ENTRYPOINT ["/entrypoint.sh"]
