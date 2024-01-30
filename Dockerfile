@@ -1,7 +1,5 @@
 FROM python:3.10-alpine
-LABEL maintainer="Enterprise Team engineer@efishery.com"
-
-RUN echo "Build eFishery ERP"
+LABEL maintainer="Fanani M. Ihsan"
 
 ENV LANG C.UTF-8
 ENV ODOO_VERSION 17.0
