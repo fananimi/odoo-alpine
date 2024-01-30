@@ -48,5 +48,5 @@ Thumbs.db
 *.mov
 *.wmv
 
-# eFishery ignored files
+# odoo ignored files
 odoo.conf

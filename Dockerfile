@@ -65,7 +65,7 @@ RUN unzip ${ODOO_VERSION}.zip && cd odoo-${ODOO_VERSION} && \
     python setup.py install
 
 # Clear Installation cache
-RUN mv /build/odoo-${ODOO_VERSION}/addons /mnt/community_addons && rm -rf /build
+RUN mkdir -p /mnt/addons && mv /build/odoo-${ODOO_VERSION}/addons /mnt/addons/community && rm -rf /build
 
 WORKDIR /
 
@@ -90,6 +90,7 @@ RUN chown nginx:nginx -R /etc/odoo && chmod 755 /etc/odoo && \
     chmod 777 /usr/local/bin/odoo.sh && chmod 777 /usr/local/bin/wait-for-psql.py
 
 COPY ./etc/nginx/http.d/default.conf /etc/nginx/http.d/default.conf
+COPY ./write_config.py write_config.py
 COPY ./entrypoint.sh /entrypoint.sh
 
 # # Expose web service
