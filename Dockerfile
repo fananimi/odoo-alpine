@@ -2,6 +2,7 @@ FROM python:3.10-alpine
 LABEL maintainer="Fanani M. Ihsan"
 
 ENV LANG C.UTF-8
+ENV ODOO_COMMIT a34e97e
 ENV ODOO_VERSION 17.0
 ENV ODOO_RC /etc/odoo/odoo.conf
 
