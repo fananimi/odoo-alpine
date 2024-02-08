@@ -64,6 +64,8 @@ RUN unzip ${ODOO_VERSION}.zip && cd odoo-${ODOO_VERSION} && \
     echo 'INPUT ( libldap.so )' > /usr/lib/libldap_r.so && \
     pip3 install -r requirements.txt --no-cache-dir  && \
     python setup.py install
+# Set Commit ID
+RUN export ODOO_SHA=$(curl -s 'https://api.github.com/repos/odoo/odoo/commits/17.0?per_page=1' | python3 -c "import sys, json; print(json.load(sys.stdin)['sha'])")
 
 # Clear Installation cache
 RUN mkdir -p /mnt/addons && mv /build/odoo-${ODOO_VERSION}/addons /mnt/addons/community && rm -rf /build
