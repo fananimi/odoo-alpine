@@ -41,7 +41,6 @@ do
       break
       ;;
     *)
-      echo "Unexpected option: $1"
       break
       ;;
   esac

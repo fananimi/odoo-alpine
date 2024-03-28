@@ -50,3 +50,6 @@ Thumbs.db
 
 # odoo ignored files
 odoo.conf
+
+# Docker
+.env

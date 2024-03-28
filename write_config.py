@@ -3,7 +3,7 @@ import os
 from configparser import ConfigParser
 from odoo.tools import config as odoo_config
 
-ODOO_CONFIG_FILE = '/etc/odoo/odoo.conf'
+ODOO_CONFIG_FILE = os.environ['ODOO_RC']
 ODOO_CONFIG_SECTIONS = ["options"]
 toml_config = {}
 for section in ODOO_CONFIG_SECTIONS:

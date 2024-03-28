@@ -1,4 +1,3 @@
-version: '3.2'
 services:
 
   odoo-database:
@@ -6,11 +5,8 @@ services:
     container_name: odoo-database
     ports:
       - "5432:5432"
-    environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_PASSWORD=odoo
-      - POSTGRES_USER=odoo
-      - PGDATA=/var/lib/postgresql/data/pgdata
+    env_file:
+      - .env
     volumes:
       - odoo-database-data:/var/lib/postgresql/data/pgdata
 
@@ -21,26 +17,13 @@ services:
     container_name: odoo-erp
     ports:
       - "80:8080"
-    environment:
-      - OPTIONS__ADMIN_PASSWD=secret
-      - OPTIONS__ADDONS_PATH=/mnt/addons/community
-      - OPTIONS__DATA_DIR=/mnt/odoo-data
-      - OPTIONS__LOG_HANDLER=:INFO
-      - OPTIONS__LOG_LEVEL=info
-      - OPTIONS__DB_HOST=odoo-database
-      - OPTIONS__DB_PORT=5432
-      - OPTIONS__DB_USER=odoo
-      - OPTIONS__DB_NAME=False
-      - OPTIONS__DB_PASSWORD=odoo
-      - OPTIONS__WORKERS=3
+    env_file:
+      - .env
     tty: true
     depends_on:
       - odoo-database
     links:
       - odoo-database
-    volumes:
-      - ./addons:/mnt/efishery_addons
-      - odoo-erp-data:/mnt
     platform: linux/amd64
 
 volumes:
